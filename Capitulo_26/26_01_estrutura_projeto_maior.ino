@@ -1,51 +1,88 @@
-// ================================================
-// NOME DO PROJETO
-// Autores: Nome1, Nome2
-// Data: XX/XX/XXXX
-// Descricao: breve descricao do projeto
-// ================================================
-// === BIBLIOTECAS ===
+/*
+  TEMPLATE DIDATICO — ESTRUTURA DE UM PROJETO MAIOR
+
+  Este arquivo NAO representa um projeto funcional completo.
+  Ele serve como modelo para que a equipe organize o proprio codigo.
+
+  Complete as funcoes, pinos, sensores, atuadores e bibliotecas
+  de acordo com o projeto desenvolvido pelo grupo.
+*/
+
 #include <Servo.h>
+
+// Inclua outras bibliotecas apenas se o seu projeto realmente usar.
+// Exemplo:
 // #include <LiquidCrystal_I2C.h>
-// === DEFINICOES DE PINOS ===
-#define PINO_SENSOR  A0
-#define PINO_LED     13
-// === CONSTANTES DO PROJETO ===
+
+// ------------------------------------------------
+// DEFINICOES DE PINOS — EXEMPLOS
+// ------------------------------------------------
+#define PINO_SENSOR A0
+#define PINO_LED    13
+
+// ------------------------------------------------
+// CONSTANTES — EXEMPLOS
+// ------------------------------------------------
 const float LIMIAR = 30.0;
-const int VELOCIDADE_MAX = 200;
-// === VARIAVEIS GLOBAIS ===
-float temperatura = 0;
+
+// ------------------------------------------------
+// VARIAVEIS GLOBAIS — EXEMPLOS
+// ------------------------------------------------
+float valorSensor = 0.0;
 bool alarmeAtivo = false;
-// === OBJETOS ===
+
+// ------------------------------------------------
+// OBJETOS — CRIE APENAS OS NECESSARIOS
+// ------------------------------------------------
 // Servo meuServo;
 // LiquidCrystal_I2C lcd(0x27, 16, 2);
-// ================================================
+
+// ------------------------------------------------
 // FUNCOES AUXILIARES
-// ================================================
+// ------------------------------------------------
 float lerSensor() {
-  // Ler e processar o sensor
-  return 0;
+  /*
+    SUBSTITUA este conteudo pela leitura real do sensor.
+
+    Exemplo:
+      int leitura = analogRead(PINO_SENSOR);
+      return leitura;
+  */
+
+  return 0.0;
 }
 
 void atualizarSaidas() {
+  /*
+    SUBSTITUA este conteudo pelas acoes do seu projeto.
 
-  // Atualizar LEDs, motores, display etc.
+    Exemplos:
+      - atualizar LEDs;
+      - movimentar motores ou servos;
+      - atualizar o display;
+      - acionar um buzzer;
+      - enviar dados ao Monitor Serial.
+  */
 }
-// ================================================
-// SETUP
-// ================================================
 
+// ------------------------------------------------
+// SETUP
+// ------------------------------------------------
 void setup() {
   Serial.begin(9600);
-  pinMode(PINO_LED, OUTPUT);
-  // Outras inicializacoes...
-}
-// ================================================
-// LOOP PRINCIPAL
-// ================================================
 
+  pinMode(PINO_LED, OUTPUT);
+
+  // Adicione aqui as demais inicializacoes.
+}
+
+// ------------------------------------------------
+// LOOP PRINCIPAL
+// ------------------------------------------------
 void loop() {
-  temperatura = lerSensor();
+  valorSensor = lerSensor();
+
   atualizarSaidas();
+
   delay(100);
 }
