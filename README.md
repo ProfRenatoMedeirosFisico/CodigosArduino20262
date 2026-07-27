@@ -125,11 +125,17 @@ Para usar um programa, abra o arquivo correspondente, copie o código para a Ard
 
 ### Capítulo 24 — Projeto Robótico Integrador
 
-- [`24_01_robo_esquivador_hc_sr04_l298n.ino`](Capitulo_24/24_01_robo_esquivador_hc_sr04_l298n.ino) — Robo esquivador hc sr04 l298n
+- [`24_01_robo_esquivador_hc_sr04_l298n.ino`](Capitulo_24/24_01_robo_esquivador_hc_sr04_l298n.ino) — Robo esquivadOR hc sr04 l298n
 
 ### Capítulo 26 — Desenvolvimento do Projeto Final — Parte 1
 
 - [`26_01_estrutura_projeto_maior.ino`](Capitulo_26/26_01_estrutura_projeto_maior.ino) — Estrutura projeto maior
+
+## Bibliotecas e verificação
+
+- Consulte [`BIBLIOTECAS.md`](BIBLIOTECAS.md) para as dependências, versões recomendadas e fontes oficiais.
+- O arquivo [`MANIFESTO_SHA256.txt`](MANIFESTO_SHA256.txt) registra a assinatura SHA-256 dos 50 programas publicados.
+- O script [`ferramentas/verificar_links_apostila.py`](ferramentas/verificar_links_apostila.py) verifica automaticamente se cada `\codigoGitHub{...}` da apostila aponta para um arquivo existente neste repositório.
 
 ## Uso educacional
 
