@@ -16,10 +16,13 @@ bool estadoAnteriorHora = HIGH;
 bool estadoAnteriorMin  = HIGH;
 
 void setup() {
+  // Inicializa LCD
   lcd.init();
   lcd.backlight();
+  // Configura botoes com pull-up interno
   pinMode(BTN_HORA, INPUT_PULLUP);
   pinMode(BTN_MIN,  INPUT_PULLUP);
+  // Mensagem inicial
   lcd.setCursor(2, 0);
   lcd.print("Relogio UEG");
   lcd.setCursor(4, 1);
@@ -32,26 +35,45 @@ void setup() {
 
 void atualizarRelogio() {
   unsigned long agora = millis();
+  // Verifica se passou aproximadamente 1 segundo
   if (agora - ultimaAtualizacao >= 1000) {
+    // Mantem a referencia temporal em passos de 1 s
     ultimaAtualizacao += 1000;
     segundos++;
-    if (segundos >= 60) { segundos = 0; minutos++; }
-    if (minutos >= 60) { minutos = 0; horas++; }
-    if (horas >= 24) { horas = 0; }
+    if (segundos >= 60) {
+      segundos = 0;
+      minutos++;
+    }
+    if (minutos >= 60) {
+      minutos = 0;
+      horas++;
+    }
+    if (horas >= 24) {
+      horas = 0;
+    }
   }
 }
 
 void lerBotoes() {
   bool estadoHora = digitalRead(BTN_HORA);
   bool estadoMin  = digitalRead(BTN_MIN);
-  if (estadoAnteriorHora == HIGH && estadoHora == LOW) horas = (horas + 1) % 24;
-  if (estadoAnteriorMin == HIGH && estadoMin == LOW) { minutos = (minutos + 1) % 60; segundos = 0; }
+  // Detecta o instante em que o botao de hora e pressionado
+  if (estadoAnteriorHora == HIGH && estadoHora == LOW) {
+    horas = (horas + 1) % 24;
+  }
+  // Detecta o instante em que o botao de minuto e pressionado
+  if (estadoAnteriorMin == HIGH && estadoMin == LOW) {
+    minutos = (minutos + 1) % 60;
+    segundos = 0;
+  }
   estadoAnteriorHora = estadoHora;
   estadoAnteriorMin  = estadoMin;
 }
 
 void imprimirDoisDigitos(int valor) {
-  if (valor < 10) lcd.print("0");
+  if (valor < 10) {
+    lcd.print("0");
+  }
   lcd.print(valor);
 }
 
