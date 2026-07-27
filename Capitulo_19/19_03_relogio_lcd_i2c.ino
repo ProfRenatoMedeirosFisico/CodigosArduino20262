@@ -1,84 +1,127 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-// Endereco obtido com o scanner I2C
+
+// Endereco obtido com o scanner I2C.
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-// Pinos dos botoes
+
 const byte BTN_HORA = 6;
 const byte BTN_MIN  = 7;
-// Horario inicial
+
 int horas = 12;
 int minutos = 0;
 int segundos = 0;
-// Controle do tempo
+
 unsigned long ultimaAtualizacao = 0;
-// Estados anteriores dos botoes
-bool estadoAnteriorHora = HIGH;
-bool estadoAnteriorMin  = HIGH;
+
+bool leituraAnteriorHora = HIGH;
+bool leituraAnteriorMin  = HIGH;
+bool estadoEstavelHora = HIGH;
+bool estadoEstavelMin  = HIGH;
+
+unsigned long instanteMudancaHora = 0;
+unsigned long instanteMudancaMin  = 0;
+
+const unsigned long TEMPO_DEBOUNCE = 40;
 
 void setup() {
-  // Inicializa LCD
   lcd.init();
   lcd.backlight();
-  // Configura botoes com pull-up interno
+
   pinMode(BTN_HORA, INPUT_PULLUP);
-  pinMode(BTN_MIN,  INPUT_PULLUP);
-  // Mensagem inicial
+  pinMode(BTN_MIN, INPUT_PULLUP);
+
   lcd.setCursor(2, 0);
   lcd.print("Relogio UEG");
   lcd.setCursor(4, 1);
   lcd.print("12:00:00");
+
   delay(1500);
+
   lcd.clear();
   lcd.setCursor(3, 0);
   lcd.print("HORARIO");
+
+  // Inicia a referencia temporal somente apos a tela inicial.
+  ultimaAtualizacao = millis();
 }
 
 void atualizarRelogio() {
   unsigned long agora = millis();
-  // Verifica se passou aproximadamente 1 segundo
-  if (agora - ultimaAtualizacao >= 1000) {
-    // Mantem a referencia temporal em passos de 1 s
-    ultimaAtualizacao += 1000;
+
+  // Recupera segundos caso o loop fique temporariamente ocupado.
+  while (agora - ultimaAtualizacao >= 1000UL) {
+    ultimaAtualizacao += 1000UL;
     segundos++;
+
     if (segundos >= 60) {
       segundos = 0;
       minutos++;
     }
+
     if (minutos >= 60) {
       minutos = 0;
       horas++;
     }
+
     if (horas >= 24) {
       horas = 0;
     }
   }
 }
 
+bool botaoFoiPressionado(byte pino,
+                         bool &leituraAnterior,
+                         bool &estadoEstavel,
+                         unsigned long &instanteMudanca) {
+  bool leituraAtual = digitalRead(pino);
+  unsigned long agora = millis();
+
+  if (leituraAtual != leituraAnterior) {
+    instanteMudanca = agora;
+    leituraAnterior = leituraAtual;
+  }
+
+  if ((agora - instanteMudanca) >= TEMPO_DEBOUNCE &&
+      leituraAtual != estadoEstavel) {
+
+    estadoEstavel = leituraAtual;
+
+    if (estadoEstavel == LOW) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void lerBotoes() {
-  bool estadoHora = digitalRead(BTN_HORA);
-  bool estadoMin  = digitalRead(BTN_MIN);
-  // Detecta o instante em que o botao de hora e pressionado
-  if (estadoAnteriorHora == HIGH && estadoHora == LOW) {
+  if (botaoFoiPressionado(BTN_HORA,
+                          leituraAnteriorHora,
+                          estadoEstavelHora,
+                          instanteMudancaHora)) {
     horas = (horas + 1) % 24;
   }
-  // Detecta o instante em que o botao de minuto e pressionado
-  if (estadoAnteriorMin == HIGH && estadoMin == LOW) {
+
+  if (botaoFoiPressionado(BTN_MIN,
+                          leituraAnteriorMin,
+                          estadoEstavelMin,
+                          instanteMudancaMin)) {
     minutos = (minutos + 1) % 60;
     segundos = 0;
+
+    // Evita um segundo muito curto logo apos o ajuste.
+    ultimaAtualizacao = millis();
   }
-  estadoAnteriorHora = estadoHora;
-  estadoAnteriorMin  = estadoMin;
 }
 
 void imprimirDoisDigitos(int valor) {
-  if (valor < 10) {
-    lcd.print("0");
-  }
+  if (valor < 10) lcd.print("0");
   lcd.print(valor);
 }
 
 void exibirHora() {
   lcd.setCursor(4, 1);
+
   imprimirDoisDigitos(horas);
   lcd.print(":");
   imprimirDoisDigitos(minutos);
