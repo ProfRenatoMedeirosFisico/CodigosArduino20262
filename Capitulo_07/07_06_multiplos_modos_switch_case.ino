@@ -5,7 +5,7 @@ int botao1 = 8;   // pressionar -> modo 1 (piscarTodos)
 int botao2 = 9;   // pressionar -> modo 2 (knightRider)
 int botao3 = 10;  // pressionar -> modo 3 (sequencial)
 
-int modo = 2;     // modo inicial, antes de qualquer botão ser pressionado
+int modo = 2;
 
 void todosDesligados() {
   for (int i = 0; i < numLeds; i++) {
@@ -13,13 +13,19 @@ void todosDesligados() {
   }
 }
 
+void lerBotoes() {
+  if (digitalRead(botao1) == LOW) modo = 1;
+  if (digitalRead(botao2) == LOW) modo = 2;
+  if (digitalRead(botao3) == LOW) modo = 3;
+}
+
 void piscarTodos() {
-  for (int i = 0; i < numLeds; i++) {
-    digitalWrite(leds[i], HIGH);
-  }
+  int modoAoEntrar = modo;
+  for (int i = 0; i < numLeds; i++) digitalWrite(leds[i], HIGH);
   delay(300);
   todosDesligados();
   delay(300);
+  lerBotoes();
 }
 
 void sequencial() {
@@ -27,6 +33,8 @@ void sequencial() {
     todosDesligados();
     digitalWrite(leds[i], HIGH);
     delay(150);
+    lerBotoes();
+    if (modo != 3) return;   // botão trocou o modo -> sai na hora
   }
 }
 
@@ -35,19 +43,16 @@ void knightRider() {
     todosDesligados();
     digitalWrite(leds[i], HIGH);
     delay(80);
+    lerBotoes();
+    if (modo != 2) return;
   }
   for (int i = numLeds - 2; i >= 1; i--) {
     todosDesligados();
     digitalWrite(leds[i], HIGH);
     delay(80);
+    lerBotoes();
+    if (modo != 2) return;
   }
-}
-
-void lerBotoes() {
-  // INPUT_PULLUP: pino fica HIGH em repouso e cai para LOW quando o botão é pressionado
-  if (digitalRead(botao1) == LOW) modo = 1;
-  if (digitalRead(botao2) == LOW) modo = 2;
-  if (digitalRead(botao3) == LOW) modo = 3;
 }
 
 void setup() {
